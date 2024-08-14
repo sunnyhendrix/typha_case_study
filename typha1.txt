@@ -1,0 +1,78 @@
+Here is the R code that performs statistical tests to determine if weeks_submerged, height, flowers, or shoots affect survival. The code also provides graphical representations of the number of survivors by weeks submerged, and the effects of height, flowers, and shoots on survival.
+
+r
+Copy code
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(MASS)
+library(broom)
+
+# Load the data
+cattail_data <- read_csv("cattail_data.csv")
+
+# Convert survival to a binary variable (yes = 1, no = 0)
+cattail_data$survival_binary <- ifelse(cattail_data$survival == "yes", 1, 0)
+
+# Statistical test: Chi-squared test to see if weeks_submerged affects survival
+survival_by_weeks <- table(cattail_data$weeks_submerged, cattail_data$survival)
+chi_sq_test_weeks <- chisq.test(survival_by_weeks)
+
+# Print the results
+print(chi_sq_test_weeks)
+
+# Visualize survival by weeks_submerged
+ggplot(cattail_data, aes(x = factor(weeks_submerged), fill = survival)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Survival by Weeks Submerged", x = "Weeks Submerged", y = "Count") +
+  theme_minimal()
+
+# Logistic regression to test if height, flowers, or shoots affect survival
+logit_model <- glm(survival_binary ~ height + flowers + shoots, data = cattail_data, family = binomial)
+summary(logit_model)
+
+# Create a tidy version of the model for easy interpretation
+tidy_logit_model <- tidy(logit_model)
+print(tidy_logit_model)
+
+# Visualize the effect of height on survival
+ggplot(cattail_data, aes(x = height, y = survival_binary)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = binomial), se = FALSE) +
+  labs(title = "Effect of Height on Survival", x = "Height", y = "Survival Probability") +
+  theme_minimal()
+
+# Visualize the effect of flowers on survival
+ggplot(cattail_data, aes(x = flowers, y = survival_binary)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = binomial), se = FALSE) +
+  labs(title = "Effect of Flowers on Survival", x = "Number of Flowers", y = "Survival Probability") +
+  theme_minimal()
+
+# Visualize the effect of shoots on survival
+ggplot(cattail_data, aes(x = shoots, y = survival_binary)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = binomial), se = FALSE) +
+  labs(title = "Effect of Shoots on Survival", x = "Number of Shoots", y = "Survival Probability") +
+  theme_minimal()
+Explanation:
+Chi-Squared Test:
+
+The code uses a Chi-squared test to determine if the number of weeks submerged significantly affects the survival of the cattail plants. The results are printed for interpretation.
+Logistic Regression:
+
+A logistic regression model is fitted to assess whether height, flowers, or shoots significantly influence survival. The summary and tidy version of the model are provided to interpret the coefficients.
+Visualization:
+
+The code generates bar plots to show survival by weeks submerged.
+Scatter plots with logistic regression lines are provided to visualize the effect of height, flowers, and shoots on survival probability.
+You can run this code in RStudio or any R environment where you have the necessary packages installed.
+
+
+
+
+
+
+
+

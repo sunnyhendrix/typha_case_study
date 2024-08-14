@@ -1,0 +1,98 @@
+Here is an R script to analyze the effect of various factors on survival, including weeks_submerged, height, flowers, and shoots. The script performs statistical tests and generates relevant graphical representations.
+
+r
+Copy code
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Load the data
+cattail_data <- read.csv("cattail_data.csv")
+
+# Convert survival to a binary numeric value
+cattail_data$survival <- ifelse(cattail_data$survival == "yes", 1, 0)
+
+# 1. Statistical test to determine if weeks_submerged affect survival
+weeks_model <- glm(survival ~ weeks_submerged, data = cattail_data, family = binomial)
+summary(weeks_model)
+
+# Graphical representation of the number of survival by weeks_submerged
+ggplot(cattail_data, aes(x = factor(weeks_submerged), fill = factor(survival))) +
+  geom_bar(position = "dodge") +
+  labs(title = "Survival by Weeks Submerged", x = "Weeks Submerged", y = "Count", fill = "Survival") +
+  theme_minimal()
+
+# 2. Test whether height affects survival
+height_model <- glm(survival ~ height, data = cattail_data, family = binomial)
+summary(height_model)
+
+# Graphical representation of survival vs height
+ggplot(cattail_data, aes(x = height, y = survival)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) +
+  labs(title = "Survival vs Height", x = "Height (cm)", y = "Survival Probability") +
+  theme_minimal()
+
+# 3. Test whether the number of flowers affects survival
+flowers_model <- glm(survival ~ flowers, data = cattail_data, family = binomial)
+summary(flowers_model)
+
+# Graphical representation of survival vs number of flowers
+ggplot(cattail_data, aes(x = flowers, y = survival)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) +
+  labs(title = "Survival vs Number of Flowers", x = "Number of Flowers", y = "Survival Probability") +
+  theme_minimal()
+
+# 4. Test whether the number of shoots affects survival
+shoots_model <- glm(survival ~ shoots, data = cattail_data, family = binomial)
+summary(shoots_model)
+
+# Graphical representation of survival vs number of shoots
+ggplot(cattail_data, aes(x = shoots, y = survival)) +
+  geom_point() +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE) +
+  labs(title = "Survival vs Number of Shoots", x = "Number of Shoots", y = "Survival Probability") +
+  theme_minimal()
+
+# Save the models' summaries as text files
+sink("weeks_model_summary.txt")
+summary(weeks_model)
+sink()
+
+sink("height_model_summary.txt")
+summary(height_model)
+sink()
+
+sink("flowers_model_summary.txt")
+summary(flowers_model)
+sink()
+
+sink("shoots_model_summary.txt")
+summary(shoots_model)
+sink()
+Explanation:
+Loading and Preparation:
+
+Load the data and convert the survival column into a binary numeric variable where yes = 1 and no = 0.
+Statistical Tests:
+
+Fit a logistic regression model for each predictor (weeks_submerged, height, flowers, and shoots) against survival.
+Summarize the models to check the significance of each predictor.
+Graphical Representations:
+
+Bar Plot: Displays the number of survivors by weeks submerged.
+Scatter Plots with Logistic Regression Line: Show the relationship between survival probability and each continuous predictor (height, flowers, and shoots).
+Saving Outputs:
+
+The summaries of the logistic regression models are saved to text files for review.
+Running the Script:
+Place the cattail_data.csv in your working directory.
+Run the script in R, and it will generate the plots and save the model summaries.
+Let me know if you need further modifications!
+
+
+
+
+
+

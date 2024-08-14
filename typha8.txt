@@ -1,0 +1,87 @@
+To analyze whether weeks_submerged, height, flowers, or shoots affect survival, and to provide graphical representations of these effects, you can follow these steps in R:
+
+Load the Data: Read the CSV file into R.
+Data Preparation: Convert relevant columns to the appropriate data types.
+Statistical Tests: Perform statistical tests to evaluate the effect of weeks_submerged, height, flowers, and shoots on survival.
+Graphical Representation: Create plots to visualize the number of survivals by weeks_submerged, and relationships between height, flowers, shoots, and survival.
+Here's a comprehensive R script to achieve this:
+
+r
+Copy code
+# Load required libraries
+library(tidyverse)  # For data manipulation and visualization
+library(broom)      # For tidying model outputs
+library(ggplot2)    # For creating plots
+
+# Load the data
+data <- read.csv("cattail_data.csv")
+
+# Convert 'survival' to a factor for binary outcome
+data$survival <- as.factor(data$survival)
+
+# Check the data structure
+str(data)
+
+# 1. Statistical test for weeks_submerged
+# Logistic regression to check if weeks_submerged affects survival
+model_weeks_submerged <- glm(survival ~ weeks_submerged, data = data, family = binomial)
+
+# Summarize the model
+summary(model_weeks_submerged)
+tidy(model_weeks_submerged)
+
+# 2. Graphical representation of survival by weeks_submerged
+ggplot(data, aes(x = factor(weeks_submerged), fill = survival)) +
+  geom_bar(position = "fill") +
+  labs(x = "Weeks Submerged", y = "Proportion", fill = "Survival") +
+  ggtitle("Proportion of Survival by Weeks Submerged") +
+  theme_minimal()
+
+# 3. Statistical tests for height, flowers, and shoots
+# Logistic regression to check if height, flowers, or shoots affect survival
+model_height <- glm(survival ~ height, data = data, family = binomial)
+model_flowers <- glm(survival ~ flowers, data = data, family = binomial)
+model_shoots <- glm(survival ~ shoots, data = data, family = binomial)
+
+# Summarize the models
+summary(model_height)
+summary(model_flowers)
+summary(model_shoots)
+
+# Tidy the models
+tidy(model_height)
+tidy(model_flowers)
+tidy(model_shoots)
+
+# 4. Graphical representations for height, flowers, and shoots
+
+# Height vs Survival
+ggplot(data, aes(x = height, fill = survival)) +
+  geom_histogram(binwidth = 10, position = "fill") +
+  labs(x = "Height", y = "Proportion", fill = "Survival") +
+  ggtitle("Proportion of Survival by Height") +
+  theme_minimal()
+
+# Flowers vs Survival
+ggplot(data, aes(x = flowers, fill = survival)) +
+  geom_bar(position = "fill") +
+  labs(x = "Number of Flowers", y = "Proportion", fill = "Survival") +
+  ggtitle("Proportion of Survival by Number of Flowers") +
+  theme_minimal()
+
+# Shoots vs Survival
+ggplot(data, aes(x = shoots, fill = survival)) +
+  geom_bar(position = "fill") +
+  labs(x = "Number of Shoots", y = "Proportion", fill = "Survival") +
+  ggtitle("Proportion of Survival by Number of Shoots") +
+  theme_minimal()
+Explanation:
+Statistical Tests:
+
+Logistic Regression (glm) is used to analyze the effect of weeks_submerged, height, flowers, and shoots on survival.
+The summary() function provides details on the coefficients, significance, and fit of the model.
+The tidy() function from the broom package is used to neatly display model outputs.
+Graphical Representations:
+
+Bar Plots: To visualize the proportion of survival by weeks_submerged, height, flowers, and shoots.
+Make sure you have the required packages installed. You can install them using install.packages("tidyverse") and install.packages("broom") if you haven't already.

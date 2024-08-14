@@ -1,0 +1,67 @@
+Here's the R code that performs statistical tests to determine if the number of weeks submerged affects survival, as well as whether height, number of flowers, or number of shoots affect survival. The code also provides graphical representations of the data.
+
+r
+Copy code
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+
+# Read the data
+cattail_data <- read.csv("cattail_data.csv")
+
+# Convert columns to appropriate data types
+cattail_data$survival <- as.factor(cattail_data$survival)
+cattail_data$weeks_submerged <- as.factor(cattail_data$weeks_submerged)
+
+# Summary of the data
+summary(cattail_data)
+
+# Test if weeks_submerged affects survival using Chi-square test
+weeks_survival_table <- table(cattail_data$weeks_submerged, cattail_data$survival)
+chi_square_test <- chisq.test(weeks_survival_table)
+print(chi_square_test)
+
+# Plot survival by weeks_submerged
+ggplot(cattail_data, aes(x = weeks_submerged, fill = survival)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Survival by Weeks Submerged", x = "Weeks Submerged", y = "Count of Plants") +
+  theme_minimal()
+
+# Test if height affects survival using logistic regression
+height_model <- glm(survival ~ height, data = cattail_data, family = "binomial")
+summary(height_model)
+
+# Plot survival by height
+ggplot(cattail_data, aes(x = height, fill = survival)) +
+  geom_histogram(bins = 30, position = "dodge") +
+  labs(title = "Survival by Height", x = "Height", y = "Count of Plants") +
+  theme_minimal()
+
+# Test if flowers affect survival using logistic regression
+flowers_model <- glm(survival ~ flowers, data = cattail_data, family = "binomial")
+summary(flowers_model)
+
+# Plot survival by number of flowers
+ggplot(cattail_data, aes(x = flowers, fill = survival)) +
+  geom_histogram(binwidth = 1, position = "dodge") +
+  labs(title = "Survival by Number of Flowers", x = "Number of Flowers", y = "Count of Plants") +
+  theme_minimal()
+
+# Test if shoots affect survival using logistic regression
+shoots_model <- glm(survival ~ shoots, data = cattail_data, family = "binomial")
+summary(shoots_model)
+
+# Plot survival by number of shoots
+ggplot(cattail_data, aes(x = shoots, fill = survival)) +
+  geom_histogram(binwidth = 1, position = "dodge") +
+  labs(title = "Survival by Number of Shoots", x = "Number of Shoots", y = "Count of Plants") +
+  theme_minimal()
+Explanation:
+Chi-Square Test for Weeks Submerged and Survival: The code performs a chi-square test to determine if the number of weeks submerged is significantly associated with survival. The plot shows the survival distribution across different weeks submerged.
+
+Logistic Regression for Height, Flowers, and Shoots: Logistic regression models are used to test if height, number of flowers, and number of shoots significantly affect survival. Each model's summary provides p-values to determine statistical significance.
+
+Plots: The plots visually represent the survival distribution across different levels of weeks submerged, height, number of flowers, and number of shoots.
+
+Make sure you have the data file "cattail_data.csv" in your working directory before running the code. The plots will help you visually assess the relationships, and the statistical tests will provide evidence on whether these factors significantly affect survival.

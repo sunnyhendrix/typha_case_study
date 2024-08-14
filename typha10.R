@@ -1,0 +1,75 @@
+# Load necessary libraries
+library(tidyverse)
+library(broom)
+
+# Load the dataset
+data <- read_csv("cattail_data.csv")
+
+# Convert relevant columns to appropriate types
+data <- data %>%
+  mutate(
+    survival = as.factor(survival),
+    weeks_submerged = as.factor(weeks_submerged)
+  )
+
+# Summary of the data
+summary(data)
+
+# 1. Test if weeks_submerged affects survival
+
+# Chi-squared test
+weeks_submerged_survival <- table(data$weeks_submerged, data$survival)
+chi_test <- chisq.test(weeks_submerged_survival)
+print(chi_test)
+
+# Plot number of survivals by weeks_submerged
+data %>%
+  group_by(weeks_submerged, survival) %>%
+  tally() %>%
+  ggplot(aes(x = weeks_submerged, y = n, fill = survival)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Number of Survivals by Weeks Submerged", x = "Weeks Submerged", y = "Count") +
+  theme_minimal()
+
+# 2. Test if height, flowers, or shoots affect survival
+
+# Convert numerical columns to factors for logistic regression
+data <- data %>%
+  mutate(
+    flowers = as.factor(flowers),
+    shoots = as.factor(shoots)
+  )
+
+# Logistic regression models
+models <- list(
+  height = glm(survival ~ height, data = data, family = binomial),
+  flowers = glm(survival ~ flowers, data = data, family = binomial),
+  shoots = glm(survival ~ shoots, data = data, family = binomial)
+)
+
+# Summarize models
+model_summaries <- lapply(models, tidy)
+print(model_summaries)
+
+# Plotting the effects of height, flowers, and shoots on survival
+
+# Height
+data %>%
+  ggplot(aes(x = height, fill = survival)) +
+  geom_histogram(bins = 30, position = "dodge") +
+  labs(title = "Survival by Height", x = "Height", y = "Count") +
+  theme_minimal()
+
+# Flowers
+data %>%
+  ggplot(aes(x = flowers, fill = survival)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Survival by Number of Flowers", x = "Number of Flowers", y = "Count") +
+  theme_minimal()
+
+# Shoots
+data %>%
+  ggplot(aes(x = shoots, fill = survival)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Survival by Number of Shoots", x = "Number of Shoots", y = "Count") +
+  theme_minimal()
